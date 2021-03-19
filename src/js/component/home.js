@@ -16,6 +16,7 @@ export function ToDo() {
 			setTask(newArray);
 			setUserInput("");
 			setCount(count + 1);
+			updateList(task); //aqui actualizo la lista con la funcion del fetch.
 		}
 	};
 	// function para borrar tareas
@@ -24,11 +25,19 @@ export function ToDo() {
 		setTask([...task]);
 		setCount(count - 1);
 	};
-	// aqui recibo el API y se ve en la consola, ahora tengo que seguir con https://www.youtube.com/watch?v=27f3B1qndW8 y ademas seguir las instrucciones de la tarea
-	const getApi = () => {
-		fetch("https://assets.breatheco.de/apis/fake/todos/user")
-			.then(response => response.json())
-			.then(json => console.log(json));
+
+	///// codigo del ejercicio /////
+	const updateList = () => {
+		fetch(
+			"https://assets.breatheco.de/apis/fake/todos/user/FedericoBeeche",
+			{
+				method: "PUT",
+				body: JSON.stringify([]),
+				headers: {
+					"Content-Type": "application/json"
+				}
+			}
+		);
 	};
 
 	return (
@@ -55,30 +64,16 @@ export function ToDo() {
 			<p id="counter" className="ml-1">
 				{count} item(s) left{" "}
 			</p>
-			<button onClick={getApi}>Get API</button>
 		</div>
 	);
 }
 
-///// HINT CODE FROM THE LESSON /////
-// fetch('https://assets.breatheco.de/apis/fake/todos/user/alesanchezr', {
-//       method: "PUT",
-//       body: JSON.stringify(todos),
-//       headers: {
-//         "Content-Type": "application/json"
-//       }
-//     })
-//     .then(resp => {
-//         console.log(resp.ok); // will be true if the response is successfull
-//         console.log(resp.status); // the status code = 200 or code = 400 etc.
-//         console.log(resp.text()); // will try return the exact result as string
-//         return resp.json(); // (returns promise) will try to parse the result as json as return a promise that you can .then for results
-//     })
-//     .then(data => {
-//         //here is were your code should start after the fetch finishes
-//         console.log(data); //this will print on the console the exact object received from the server
-//     })
-//     .catch(error => {
-//         //error handling
-//         console.log(error);
-//     });
+// ///// sacar el API y meterlo a la consola /////
+// // aqui recibo el API y se ve en la consola, ahora tengo que seguir con https://www.youtube.com/watch?v=27f3B1qndW8 y ademas seguir las instrucciones de la tarea
+// const getApi = () => {
+// 	fetch("https://assets.breatheco.de/apis/fake/todos/user/alesanchezr")
+// 		.then(response => response.json())
+// 		.then(json => console.log(json));
+// };
+
+// <button onClick={getApi}>Get API</button>;
