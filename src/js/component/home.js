@@ -40,8 +40,8 @@ export function ToDo() {
 			.then(function(response) {
 				return response.json();
 			})
-			.then(function(task) {
-				setTask(task);
+			.then(function(miJson) {
+				setTask(miJson);
 			});
 	};
 
