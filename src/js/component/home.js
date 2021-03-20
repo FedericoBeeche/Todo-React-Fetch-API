@@ -1,43 +1,79 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export function ToDo() {
 	const [userInput, setUserInput] = useState(""); //input del user
-	const [task, setTask] = useState([
-		"Comer",
-		"Estudiar",
-		"Hacer bien mis tareas de React"
-	]); //array donde guardo el input del user - mas abajo le meto el input del user
-	const [count, setCount] = useState(3); //contador de tasks pendientes - empieza en 3 porque ya hay 3 tasks guardados en el array
+	const [task, setTask] = useState([]); //array donde guardo el input del user - mas abajo le meto el input del user
+	//const [count, setCount] = useState(0); contador de tasks pendientes - empieza en 3 porque ya hay 3 tasks guardados en el array
 
 	// aqui le meto el input del user al array
 	const handleInfo = () => {
 		if (userInput != "") {
-			let newArray = [...task, userInput];
+			let newArray = [...task, { label: userInput, done: true }];
 			setTask(newArray);
 			setUserInput("");
-			setCount(count + 1);
-			updateList(task); //aqui actualizo la lista con la funcion del fetch.
+			updateList();
+			// setCount(count + 1);
 		}
 	};
 	// function para borrar tareas
 	const deleteTask = id => {
 		task.splice(id, 1);
 		setTask([...task]);
-		setCount(count - 1);
+		updateList();
+		// if (flag) {
+		// obtenerInfo();
+		// }
+		// setCount(count - 1);
 	};
 
-	///// codigo del ejercicio /////
-	const updateList = () => {
-		fetch(
-			"https://assets.breatheco.de/apis/fake/todos/user/FedericoBeeche",
-			{
-				method: "PUT",
-				body: JSON.stringify([]),
-				headers: {
-					"Content-Type": "application/json"
-				}
+	useEffect(() => {
+		obtenerInfo();
+	}, []);
+	const obtenerInfo = async () => {
+		await fetch(url, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+				Accept: "application/json"
 			}
-		);
+		})
+			.then(function(response) {
+				return response.json();
+			})
+			.then(function(task) {
+				setTask(task);
+			});
+	};
+
+	let url = "https://assets.breatheco.de/apis/fake/todos/user/FedericoBeeche";
+	let info = {
+		method: "PUT",
+		body: JSON.stringify(task),
+		headers: {
+			"Content-Type": "application/json"
+		}
+	};
+
+	// let flag = false;
+	const updateList = async () => {
+		await fetch(url, info)
+			.then(resp => {
+				if (resp.status >= 200 && resp.status < 300) {
+					console.log("Todo va super");
+					// flag = true;
+					return resp.json();
+				} else {
+					console.log(
+						`Oh no! Hubo el siguiente error: ${resp.status}!`
+					);
+				}
+			})
+			.then(body => {
+				console.log("Esta es la info que recibimos", body);
+			})
+			.catch(error => {
+				console.log(error);
+			});
 	};
 
 	return (
@@ -55,25 +91,15 @@ export function ToDo() {
 			/>
 			{task.map((final, id) => (
 				<span className="card-subtitle mb-4 claseTask" key={id}>
-					{final}
+					{final.label}
 					<button id="botonDelete" onClick={() => deleteTask(id)}>
 						<i className="far fa-times-circle"></i>
 					</button>
 				</span>
 			))}
-			<p id="counter" className="ml-1">
+			{/* <p id="counter" className="ml-1">
 				{count} item(s) left{" "}
-			</p>
+			</p> */}
 		</div>
 	);
 }
-
-// ///// sacar el API y meterlo a la consola /////
-// // aqui recibo el API y se ve en la consola, ahora tengo que seguir con https://www.youtube.com/watch?v=27f3B1qndW8 y ademas seguir las instrucciones de la tarea
-// const getApi = () => {
-// 	fetch("https://assets.breatheco.de/apis/fake/todos/user/alesanchezr")
-// 		.then(response => response.json())
-// 		.then(json => console.log(json));
-// };
-
-// <button onClick={getApi}>Get API</button>;
